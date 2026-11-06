@@ -38,6 +38,23 @@
   };
   AudioEngine.init();
 
+  // --- CrazyGames SDK v3 Integration ---
+  let crazyGamesSDK = null;
+  async function initCrazyGames() {
+    if (window.CrazyGames && window.CrazyGames.SDK) {
+      try {
+        await window.CrazyGames.SDK.init();
+        crazyGamesSDK = window.CrazyGames.SDK;
+        if (crazyGamesSDK.game && crazyGamesSDK.game.loadingStop) {
+          crazyGamesSDK.game.loadingStop();
+        }
+        console.log("CrazyGames SDK v3 initialized successfully.");
+      } catch (e) {
+        console.warn("CrazyGames SDK initialization skipped or unavailable:", e);
+      }
+    }
+  }
+
   // --- Game State ---
   const GameState = {
     frame: 1,
@@ -496,6 +513,10 @@
     aimArrowMesh.visible = false;
     btnBowl.classList.add('hidden');
 
+    if (crazyGamesSDK && crazyGamesSDK.game && crazyGamesSDK.game.gameplayStart) {
+      crazyGamesSDK.game.gameplayStart();
+    }
+
     AudioEngine.playRoll();
 
     // Forward force matching Unity's 4000 force ratio
@@ -545,6 +566,9 @@
     if (fallenThisRoll === 10 && GameState.rollInFrame === 1) {
       GameState.strikes++;
       showBanner('STRIKE!! 🎳', '#fbbf24');
+      if (crazyGamesSDK && crazyGamesSDK.game && crazyGamesSDK.game.happytime) {
+        crazyGamesSDK.game.happytime();
+      }
     } else if (fallenThisRoll === 10 || (fallenThisRoll > 0 && pins.every(p => p.isDown))) {
       showBanner('SPARE! 🎯', '#38bdf8');
     } else if (fallenThisRoll === 0) {
@@ -617,6 +641,17 @@
     finalStrikesEl.innerText = GameState.strikes;
     finalHighScoreEl.innerText = GameState.highScore;
     modal.classList.remove('hidden');
+
+    if (crazyGamesSDK && crazyGamesSDK.game && crazyGamesSDK.game.gameplayStop) {
+      crazyGamesSDK.game.gameplayStop();
+    }
+    if (crazyGamesSDK && crazyGamesSDK.ad && crazyGamesSDK.ad.requestAd) {
+      crazyGamesSDK.ad.requestAd("midgame", {
+        adStarted: () => { AudioEngine.enabled = false; },
+        adFinished: () => { AudioEngine.enabled = true; },
+        adError: () => { AudioEngine.enabled = true; }
+      });
+    }
   }
 
   function restartGame() {
@@ -660,6 +695,13 @@
     btnBowl.addEventListener('click', bowl);
     btnNext.addEventListener('click', nextTurn);
     btnPlayAgain.addEventListener('click', restartGame);
+
+    // Prevent browser scroll inside CrazyGames iframe
+    window.addEventListener("keydown", function (e) {
+      if (["Space", "ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].indexOf(e.code) > -1) {
+        e.preventDefault();
+      }
+    }, false);
 
     // Keyboard Shortcuts
     window.addEventListener('keydown', e => {
@@ -763,6 +805,7 @@
   }
 
   // --- Initial Launch ---
+  initCrazyGames();
   initThree();
   initCannon();
   buildAlley();
@@ -773,3 +816,4 @@
   animate(performance.now());
 
 })();
+

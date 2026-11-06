@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Bowling Game Mid - 3D Unity Web Edition</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎳</text></svg>" />
+</head>
+<body>
+  <!-- 3D Canvas Container -->
+  <div id="game-container"></div>
+
+  <!-- HUD Overlay -->
+  <header id="hud-top">
+    <div class="hud-card logo-card">
+      <span class="hud-emoji">🎳</span>
+      <div class="hud-text">
+        <span class="hud-label">GAME</span>
+        <span class="hud-val title-val">Bowling Mid</span>
+      </div>
+    </div>
+
+    <div class="hud-card">
+      <span class="hud-label">FRAME</span>
+      <span id="hud-frame" class="hud-val">1 / 10</span>
+    </div>
+
+    <div class="hud-card">
+      <span class="hud-label">SCORE</span>
+      <span id="hud-score" class="hud-val">0</span>
+    </div>
+
+    <div class="hud-card">
+      <span class="hud-label">HIGH SCORE</span>
+      <span id="hud-highscore" class="hud-val">0</span>
+    </div>
+
+    <div class="hud-actions">
+      <button id="btn-sound" class="icon-btn" title="Toggle Sound">🔊</button>
+      <button id="btn-cam" class="icon-btn" title="Switch Camera View">🎥</button>
+      <button id="btn-fullscreen" class="icon-btn" title="Toggle Fullscreen">⛶</button>
+    </div>
+  </header>
+
+  <!-- Big Strike / Gutter Banner -->
+  <div id="banner" class="banner hidden">
+    <div id="banner-text" class="banner-text">STRIKE!</div>
+  </div>
+
+  <!-- Scorecard Preview Table -->
+  <div id="scorecard-wrapper">
+    <div id="scorecard">
+      <!-- 10 Frames dynamically generated -->
+    </div>
+  </div>
+
+  <!-- In-Game Controls Overlay -->
+  <footer id="hud-bottom">
+    <div class="aim-controls">
+      <button id="btn-move-left" class="control-btn" title="Move Left (A / Left Arrow)">◀</button>
+      <div class="slider-wrapper">
+        <span class="slider-hint">AIM</span>
+        <input type="range" id="aim-slider" min="-1.1" max="1.1" step="0.02" value="0" />
+      </div>
+      <button id="btn-move-right" class="control-btn" title="Move Right (D / Right Arrow)">▶</button>
+    </div>
+
+    <div class="action-controls">
+      <button id="btn-bowl" class="action-btn bowl-btn">
+        <span class="btn-icon">⚡</span>
+        <span class="btn-text">BOWL BALL</span>
+        <span class="btn-sub">[ENTER]</span>
+      </button>
+
+      <button id="btn-next" class="action-btn next-btn hidden">
+        <span class="btn-icon">↻</span>
+        <span class="btn-text">NEXT FRAME</span>
+        <span class="btn-sub">[SPACE]</span>
+      </button>
+    </div>
+
+    <div class="hint-bar">
+      <span>Use <kbd>A</kbd> / <kbd>D</kbd> or <kbd>←</kbd> / <kbd>→</kbd> to Aim • <kbd>Enter</kbd> to Bowl • <kbd>Space</kbd> for Next Turn</span>
+    </div>
+  </footer>
+
+  <!-- Game Over Modal -->
+  <div id="game-over-modal" class="modal-backdrop hidden">
+    <div class="modal-card">
+      <div class="modal-badge">GAME FINISHED!</div>
+      <h2>Match Summary</h2>
+      
+      <div class="summary-stats">
+        <div class="stat-box">
+          <span class="stat-title">FINAL SCORE</span>
+          <span id="final-score" class="stat-number">0</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-title">TOTAL STRIKES</span>
+          <span id="final-strikes" class="stat-number">0</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-title">HIGH SCORE</span>
+          <span id="final-highscore" class="stat-number">0</span>
+        </div>
+      </div>
+
+      <div class="authors-note">
+        <p>Project by <strong>M Usman Ali</strong> (SAP: 62506) &amp; <strong>Abdul Rafay Saqib</strong> (SAP: 67265)</p>
+      </div>
+
+      <div class="modal-buttons">
+        <button id="btn-play-again" class="modal-btn primary-btn">🎳 PLAY AGAIN</button>
+        <a id="btn-download-exe" href="https://github.com/bughunterusman/Bowling-game-Mid/releases/tag/v1.0.0" target="_blank" class="modal-btn secondary-btn">📥 DOWNLOAD PC BUILD</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dependencies: Three.js and Cannon.js (bundled locally) -->
+  <script src="libs/three.min.js"></script>
+  <script src="libs/cannon.min.js"></script>
+  <script src="libs/GLTFLoader.js"></script>
+  <!-- Game Implementation -->
+  <script src="game.js"></script>
+</body>
+</html>
